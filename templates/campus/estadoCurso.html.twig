@@ -1,0 +1,218 @@
+{# 
+<p> {{ app.user.roles[0] }} </p>
+<p> {{ app.user.email }} </p>
+<p> {{ app.user.password }} </p>
+<p> {{ app.user.nombre }} </p>
+<p> {{ app.user.id }} </p>
+#}
+
+{% set tema = '' %}
+{% if info == '0 Curso sin pasos' %}
+
+    {% for material in materiales %}
+
+        {% if material.visibilidad == '1' %}
+
+            {% if tema != material.tema %}
+
+                <br><br>
+                {% set tema = material.tema %}
+                <h4 style="text-decoration: underline;">Tema {{ material.tema }}</h4>
+
+            {% endif %}
+
+            {% set enlace = material.enlace|split('/view') %}
+
+            {% if material.tipo == 'PDF' %}
+
+                <h5> - {{ material.titulo }}</h5>
+                <a href="{{ material.enlace }}" download="newfilename">{{ material.titulo }}.pdf</a>
+
+            {% elseif material.tipo == 'Video' %}
+
+                <h5> - {{ material.titulo }}</h5>
+
+                <div class="row" style="text-aling:center">
+                    <iframe id="{{ material.titulo }}"
+                        title="{{ material.titulo }}"
+                        style="height: 650px;"
+                        src="{{ enlace[0] }}/preview">
+                    </iframe>
+                </div>
+
+            {% endif %}
+
+            <br><br>
+
+        {% endif %}
+        
+    {% endfor %}
+        
+{% elseif info == '1 Cuestionario inicial' %}
+
+    <h5>Cuestionario inicial</h5>
+
+{% elseif info == '2 Reserva autoevaluación' %}
+
+    <h5>Reserva tu plaza</h5>
+
+    <div class="row">
+
+        <div class='col-sm-9'>
+        
+            <div class="alert alert-info">
+
+                <p>Recuerde que la prueba dura entorno a 2:30 horas. <br>
+                Seleccione una hora entre las 09:00 am a 14:00 pm, por favor no seleccione fines de semana.</p>
+
+            </div>
+
+        </div>
+
+    </div>
+
+    <form action="reservar" method="post">
+
+        <input type="text" name="idCurso" id="idCurso" class="form-control" value="{{ idCurso }}" hidden required>
+
+        <div class="row">
+
+            <div class='col-sm-3'>
+
+                <label for="fecha">Día</label>
+                <input type="date" name="fecha" id="fecha" class="form-control" required>
+
+            </div>
+
+            <div class='col-sm-3'>
+
+                <label for="hora">Hora</label>
+                <input type="time" name="hora" id="hora" class="form-control" value="09:00" min="09:00" max="14:00" required>
+
+                <script>
+
+                    /************* DIA MES AÑO *************/
+
+                    let today = new Date();
+                    let dd = today.getDate();
+                    let mm = today.getMonth() +1;
+                    let yyyy = today.getFullYear();
+
+                    if(dd < 10){
+                        dd = '0' + dd;
+                    } 
+
+                    if(mm < 10){
+                        mm = '0' + mm;
+                    }
+
+                    today = yyyy + '-' + mm + '-' + dd;
+                    console.log(today);
+                    document.getElementById("fecha").setAttribute("min", today);
+                    document.getElementById("fecha").setAttribute("value", today);
+
+                    /************* HORA MINUTOS *************/
+
+                    let horaHoy = new Date();
+                    let hora = horaHoy.getHours();
+                    let min = horaHoy.getMinutes();
+
+                    horaHoy = hora + ":" + min;
+
+                    if(horaHoy > "09:00" && horaHoy < "14:00"){
+
+                        document.getElementById("hora").setAttribute("min", horaHoy);
+                        document.getElementById("hora").setAttribute("value", horaHoy);
+
+                    }else{
+                        
+                        let date = new Date();
+                        date.setDate(date.getDate() + 1);
+
+                        let ddN = date.getDate();
+                        let mmN = date.getMonth() +1;
+                        let yyyyN = date.getFullYear();
+
+                        if(ddN < 10){
+                            ddN = '0' + ddN;
+                        } 
+
+                        if(mmN < 10){
+                            mmN = '0' + mmN;
+                        }
+
+                        let res = yyyyN + '-' + mmN + '-' + ddN;
+                        console.log(res);
+                        document.getElementById("fecha").setAttribute("min", res);
+                        document.getElementById("fecha").setAttribute("value", res);
+
+                    }
+
+                </script>
+
+
+            </div>
+
+            <div class='col-sm-3'>
+
+                <label for="lugar">Lugar</label>
+                <select type="text" name="lugar" id="lugar" class="form-control" required>
+
+                    {% for lugar in lugares %}
+                        <option value="{{ lugar.nombre }}">{{ lugar.nombre }}</option>
+                    {% endfor %}
+                    
+                </select>
+
+            </div>
+
+        </div>
+
+        <div class="row" style="text-align:center;">
+
+            <div class='col-sm-9'>
+                
+                <br>
+                <button type="submit" class="btn btn-lg btn-primary"> Reservar </button>
+
+            </div>
+
+        </div>
+
+    </form>
+
+{% elseif info == '3 Espera resultados autoevaluación' %}
+
+    <p>A la espera de la confimación de su cita.</p>
+
+{% elseif info == '4 Explicación videoconferencia' %}
+
+    <p>4</p>
+
+{% elseif info == '5 Material entrenamiento' %}
+
+    <p>5</p>
+
+{% elseif info == '6 Examen' %}
+
+    <p>6</p>
+
+{% elseif info == '7 Reserva entrenamientos' %}
+
+    <p>7</p>
+
+{% elseif info == '8 Videos' %}
+
+    <p>8</p>
+
+{% elseif info == '9 Horario talleres' %}
+
+    <p>9</p>
+
+{% else %}
+
+    <p>10</p>
+
+{% endif %}
+<br>
+ 
